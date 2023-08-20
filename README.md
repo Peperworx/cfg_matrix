@@ -1,5 +1,5 @@
 # Cfg Matrix
-Procedural macro to generate permutations of supertraits based on features.
+Procedural macro to generate permutations of supertraits based on cfg flags.
 
 ## How this works
 
