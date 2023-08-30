@@ -1,4 +1,4 @@
-use std::{fmt::Debug, mem::size_of};
+use std::fmt::Debug;
 use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{parse::Parse, Token,  punctuated::Punctuated, Meta};
@@ -14,14 +14,15 @@ pub fn cfg_matrix(attr: TokenStream, item: TokenStream) -> TokenStream {
 
     // Parse the attrs as an array of Type: TokenTree
     let attr = syn::parse_macro_input!(attr as CfgMatrixInputs).0;
-
+    
     // Maximum of usize
     if attr.len() > 4 {
-        panic!("Cfg Matrix only supports 4 attributes for now. Read the notes section in the readme to learn more..")
+        panic!("Cfg Matrix only supports 4 attributes for now. Read the notes section in the readme to learn more..");
     }
 
     // Get the number of combinations we will need
-    let num_combs = 2 ^ (attr.len() - 1);
+    let num_combs = usize::pow(2, attr.len() as u32);
+
 
     // Extract the cfg feature
     let cfgs = attr.iter().map(|v| {
@@ -64,12 +65,11 @@ pub fn cfg_matrix(attr: TokenStream, item: TokenStream) -> TokenStream {
         input.supertraits.extend(supertraits);
 
         let out = quote! {
+            
             #[cfg(all(#(#flagged),*))]
 
             #input
         }.into();
-
-        
 
         // Add the new permutation
         traits.extend::<TokenStream>(out);
